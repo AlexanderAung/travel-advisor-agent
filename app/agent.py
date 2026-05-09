@@ -1,28 +1,29 @@
-from google import genai
-from typing import Optional
-from dotenv import load_dotenv
-from google.genai import errors as genai_errors
 import os
+from vertexai import init
+from vertexai.generative_models import GenerativeModel
+from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 # create gemini client
 def ask_gemini(prompt: str) -> str:
+    project = os.getenv("GOOGLE_CLOUD_PROJECT")
+    location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+    model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
-    api_key = os.getenv("GEMINI_API_KEY")
-    model = os.getenv("GEMINI_MODEL") or "gemini-2.0-flash"
+    if not project:
+        raise RuntimeError("Missing GOOGLE_CLOUD_PROJECT!!")
 
-    if not api_key:
-        raise RuntimeError("Missing GEMINI_API_KEY!")
+    init(project=project, location=location)
+    model = GenerativeModel(model)
 
-    client = genai.Client(api_key=api_key)
     try:
-        response = client.models.generate_content(model=model, contents=prompt)
-    except genai_errors.ClientError as e:
-        return f"Gemini API error: {e}"
+        response = model.generate_content(contents=prompt)
+    except Exception as e:
+        return f"Vertex API error: {e}"
 
-    text: Optional[str] = getattr(response, "text", None)
+    text = getattr(response, "text", None)
     if text and text.strip():
         return text.strip()
 
