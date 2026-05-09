@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent-001</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Agent-001</h1>
+      <form action="/ask" method="post">
+        <textarea name="prompt" placeholder="Ask me anything..." required>
+        {{ prompt or "" }}</textarea
+        >
+        <button type="submit">Ask</button>
+      </form>
+
+      {% if answer %}
+      <div class="response">
+        <div class="prompt">You: {{ prompt }}</div>
+        <div class="answer">{{ answer }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
