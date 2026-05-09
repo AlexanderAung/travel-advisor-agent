@@ -7,7 +7,7 @@ load_dotenv()
 
 
 # create gemini client
-def ask_client(prompt: str) -> str:
+def ask_gemini(prompt: str) -> str:
 
     api_key = os.getenv("GEMINI_API_KEY")
     model = os.getenv("GEMINI_MODEL") or "gemini-2.0-flash"
