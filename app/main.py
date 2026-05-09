@@ -15,18 +15,20 @@ templates = Jinja2Templates(directory="app/templates")
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     return templates.TemplateResponse(
-        "index.html", {"request": request, "answer": None}
+        request=request, name="index.html", context={"request": request, "answer": None}
     )
 
 
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(request: Request, prompt: str = Form(...)):
-    answer = ask_gemini(prompt)
+
+    try:
+        answer = ask_gemini(prompt)
+    except Exception as e:
+        answer = f"Agent error: {e}"
+
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "answer": answer, "prompt": prompt},
+        request=request,
+        name="index.html",
+        context={"request": request, "answer": answer, "prompt": prompt},
     )
-
-
-if __name__ == "__main__":
-    print("Hello from Main")
