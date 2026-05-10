@@ -23,7 +23,7 @@ async def root(request: Request):
 async def ask(request: Request, prompt: str = Form(...)):
 
     try:
-        answer = ask_gemini(prompt)
+        answer = await ask_gemini(prompt)
     except Exception as e:
         answer = f"Agent error: {e}"
 
