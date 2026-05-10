@@ -83,12 +83,20 @@ runner = Runner(
 )
 
 
-async def ask_gemini(prompt: str) -> str:
-    session = await session_service.create_session(
+async def ask_gemini(prompt: str, session_id: str | None = None) -> str:
+    session_id = session_id or str(uuid4())
+    session = await session_service.get_session(
         app_name=agent.name,
         user_id=APP_USER_ID,
-        session_id=str(uuid4()),
+        session_id=session_id,
     )
+
+    if session is None:
+        session = await session_service.create_session(
+            app_name=agent.name,
+            user_id=APP_USER_ID,
+            session_id=session_id,
+        )
 
     final_response = ""
     try:
