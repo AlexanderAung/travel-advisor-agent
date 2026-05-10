@@ -4,23 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Agent-001</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}" />
   </head>
   <body>
-    <div class="container">
-      <h1>Agent-001</h1>
-      <form action="/ask" method="post">
-        <textarea name="prompt" placeholder="Ask me anything..." required>
-        {{ prompt or "" }}</textarea
-        >
-        <button type="submit">Ask</button>
-      </form>
+    <main class="chat-shell">
+      <header class="chat-header">
+        <div>
+          <p class="eyebrow">Travel advisor</p>
+          <h1>Your Travel Advisor Agent</h1>
+        </div>
+        <form action="/reset" method="post">
+          <button class="ghost-button" type="submit">New chat</button>
+        </form>
+      </header>
 
-      {% if answer %}
-      <div class="response">
-        <div class="prompt">You: {{ prompt }}</div>
-        <div class="answer">{{ answer }}</div>
-      </div>
-      {% endif %}
-    </div>
+      <section class="messages" aria-live="polite">
+        {% if messages %} {% for message in messages %}
+        <article class="message {{ message.role }}">
+          <div class="avatar" aria-hidden="true">
+            {% if message.role == "user" %}Y{% else %}A{% endif %}
+          </div>
+          <div class="bubble">
+            <div class="label">
+              {% if message.role == "user" %}You{% else %}Agent{% endif %}
+            </div>
+            <p>{{ message.content }}</p>
+          </div>
+        </article>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <div class="spark">A</div>
+          <h2>Plan a trip without starting over.</h2>
+          <p>
+            Ask about destinations, budgets, seasons, or follow up naturally.
+          </p>
+        </div>
+        {% endif %}
+      </section>
+
+      <form class="composer" action="/ask" method="post">
+        <textarea
+          name="prompt"
+          rows="1"
+          placeholder="Message Agent-001"
+          required
+          autofocus
+        ></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </main>
+
+    <script>
+      const messages = document.querySelector(".messages");
+      const textarea = document.querySelector("textarea");
+
+      messages.scrollTop = messages.scrollHeight;
+
+      textarea.addEventListener("input", () => {
+        textarea.style.height = "auto";
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
+      });
+    </script>
   </body>
 </html>
